@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+
+<body class="bg-white p-10">
+    <h1 class="text-2xl font-bold">Welcome, <%= user.display_name %>!</h1>
+    <p class="mt-2 text-gray-600">Email: <%= user.email %>
+    </p>
+    <img src="<%= user.images?.[0]?.url %>" alt="Profile" class="rounded-full w-32 mt-4">
+</body>
+
+</html>

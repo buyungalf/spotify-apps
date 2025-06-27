@@ -1,16 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Dashboard</title>
-    <link href="/styles.css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Spotify Stats</title>
+    <link href="/style.css" rel="stylesheet" />
 </head>
 
-<body class="bg-white p-10">
-    <h1 class="text-2xl font-bold">Welcome, <%= user.display_name %>!</h1>
-    <p class="mt-2 text-gray-600">Email: <%= user.email %>
-    </p>
-    <img src="<%= user.images?.[0]?.url %>" alt="Profile" class="rounded-full w-32 mt-4">
+<body class="bg-gray-900 text-white min-h-screen font-sans">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4 shadow mb-6">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="text-lg font-bold text-green-400">Spotify Stats</div>
+            <ul class="flex space-x-4 text-sm md:text-base">
+                <li><a href="/dashboard" class="text-white font-medium underline">Top Tracks</a></li>
+                <li><a href="/top-artists" class="text-white font-medium underline">Top Artists</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white">Top Albums</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white">Top Genres</a></li>
+                <li><a href="#" class="text-gray-400 hover:text-white">Recently Played</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="max-w-5xl mx-auto px-4">
+        <h1 class="text-2xl font-bold mb-4">Welcome, <%= user.display_name %> 👋</h1>
+
+        <h2 class="text-xl font-semibold mb-3 text-green-300">Your Top Tracks 🎧</h2>
+        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <% tracks.forEach(track=> { %>
+                <li class="bg-gray-800 rounded-lg shadow p-4 hover:bg-gray-700 transition flex items-start space-x-4">
+                    <!-- Album cover -->
+                    <img src="<%= track.album.images[0]?.url %>" alt="Cover"
+                        class="w-16 h-16 mt-2 rounded shadow-md object-cover" />
+
+                    <!-- Track info -->
+                    <div>
+                        <div class="font-semibold text-lg mb-1">
+                            <%= track.name %>
+                        </div>
+                        <div class="text-sm text-gray-400 mb-1">
+                            Artist: <%= track.artists.map(a=> a.name).join(", ") %>
+                        </div>
+                        <div class="text-sm text-gray-400">
+                            Album: <%= track.album.name %>
+                        </div>
+                    </div>
+                </li>
+                <% }) %>
+        </ul>
+    </main>
 </body>
 
 </html>

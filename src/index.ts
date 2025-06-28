@@ -5,6 +5,8 @@ import session from "express-session";
 import authRoutes from "./routes/auth";
 import dashboardRoutes from "./routes/dashboard";
 import topArtists from "./routes/topArtists";
+import topAlbums from "./routes/topAlbums";
+import statueOfGod from "./routes/statue-of-god";
 
 dotenv.config();
 
@@ -32,6 +34,8 @@ app.get("/", (req, res) => {
 app.use(authRoutes);
 app.use(dashboardRoutes);
 app.use(topArtists);
+app.use(topAlbums);
+app.use(statueOfGod);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://127.0.0.1:${PORT}`);

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Top Artists</title>
+    <title>Top Albums</title>
     <link href="/style.css" rel="stylesheet" />
 </head>
 
@@ -15,8 +15,8 @@
             <div class="text-lg font-bold text-green-400">Spotify Stats</div>
             <ul class="flex space-x-4 text-sm md:text-base">
                 <li><a href="/dashboard" class="text-gray-400 hover:text-white">Top Tracks</a></li>
-                <li><a href="/top-artists" class="text-white font-medium underline">Top Artists</a></li>
-                <li><a href="/top-albums" class="text-gray-400 hover:text-white">Top Albums</a></li>
+                <li><a href="/top-artists" class="text-gray-400 hover:text-white">Top Artists</a></li>
+                <li><a href="/top-albums" class="text-white underline">Top Albums</a></li>
                 <li><a href="/statue-of-god" class="text-gray-400 hover:text-white">Generate</a></li>
                 <li><a href="/logout" class="text-gray-400 hover:text-white">Logout</a></li>
             </ul>
@@ -25,23 +25,25 @@
 
     <!-- Content -->
     <main class="max-w-5xl mx-auto px-4">
-        <h1 class="text-2xl font-bold mb-4">Hello, <%= user.display_name %> 👋</h1>
+        <h1 class="text-2xl font-bold mb-4">Hi, <%= user.display_name %> 👋</h1>
 
-        <h2 class="text-xl font-semibold mb-3 text-green-300">Your Top Artists 🎤</h2>
+        <h2 class="text-xl font-semibold mb-3 text-green-300">Your Top Albums 🎵</h2>
         <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            <% artists.forEach(artist=> { %>
+            <% albums.forEach(album=> { %>
                 <li
                     class="bg-gray-800 rounded-lg shadow p-4 hover:bg-gray-700 transition flex flex-col items-center text-center">
-                    <img src="<%= artist.images[0]?.url %>" alt="Artist"
-                        class="w-24 h-24 rounded-full object-cover mb-2" />
+                    <img src="<%= album.images[0]?.url %>" alt="Album Cover"
+                        class="w-24 h-24 rounded object-cover mb-2" />
                     <div class="font-semibold">
-                        <%= artist.name %>
+                        <%= album.name %>
                     </div>
                     <div class="text-sm text-gray-400">
-                        <%= artist.genres.slice(0, 2).join(", ") %></div>
-        </li>
-      <% }) %>
-    </ul>
-  </main>
+                        <%= album.artists.map(a=> a.name).join(", ") %>
+                    </div>
+                </li>
+                <% }) %>
+        </ul>
+    </main>
 </body>
+
 </html>

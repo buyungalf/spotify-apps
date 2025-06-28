@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Spotify Stats</title>
+    <link href="/style.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .canvas-container {
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .draggable {
+            cursor: move;
+            position: absolute;
+            transition: transform 0.1s;
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen font-sans">
+    <!-- Navbar -->
+    <nav class="bg-gray-800 p-4 shadow mb-6">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="text-lg font-bold text-green-400">Spotify Stats</div>
+            <ul class="flex space-x-4 text-sm md:text-base">
+                <li><a href="/dashboard" class="text-gray-400 hover:text-white">Top Tracks</a></li>
+                <li><a href="/top-artists" class="text-gray-400 hover:text-white">Top Artists</a></li>
+                <li><a href="/top-albums" class="text-gray-400 hover:text-white">Top Albums</a></li>
+                <li><a href="/statue-of-god" class="text-white font-medium underline">Generate</a></li>
+                <li><a href="/logout" class="text-gray-400 hover:text-white">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="max-w-5xl mx-auto px-4">
+        <h1 class="text-2xl font-bold mb-4">Hi, <%= user.display_name %> 👋</h1>
+
+        <h2 class="text-xl font-semibold mb-3 text-green-300">Your Top Tracks 🎧</h2>
+
+        <div
+            class="relative w-full max-w-xl mx-auto h-[900px] rounded-lg overflow-hidden shadow-lg mb-10 bg-gray-800 canvas-container">
+            <!-- Canvas for background and album covers -->
+            <canvas id="memeCanvas" class="absolute inset-0 w-full h-full"></canvas>
+
+            <!-- Draggable album covers (will be positioned by JavaScript) -->
+            <img id="album1" src="<%= albums[0].images[0].url %>" alt="Album Cover"
+                class="draggable w-40 h-40 shadow-xl rounded-lg" data-x="220" data-y="250">
+            <img id="album2" src="<%= albums[1].images[0].url %>" alt="Album Cover"
+                class="draggable w-20 h-20 shadow-xl rounded-lg" data-x="20" data-y="450">
+            <img id="album3" src="<%= albums[2].images[0].url %>" alt="Album Cover"
+                class="draggable w-20 h-20 shadow-xl rounded-lg" data-x="470" data-y="450">
+            <img id="album4" src="<%= albums[3].images[0].url %>" alt="Album Cover"
+                class="draggable w-20 h-20 shadow-xl rounded-lg" data-x="60" data-y="606">
+            <img id="album5" src="<%= albums[4].images[0].url %>" alt="Album Cover"
+                class="draggable w-20 h-20 shadow-xl rounded-lg" data-x="190" data-y="606">
+            <img id="album6" src="<%= albums[5].images[0].url %>" alt="Album Cover"
+                class="draggable w-20 h-20 shadow-xl rounded-lg" data-x="320" data-y="606">
+            <img id="album7" src="<%= albums[6].images[0].url %>" alt="Album Cover"
+                class="draggable w-20 h-20 shadow-xl rounded-lg" data-x="450" data-y="606">
+            <img id="album8" src="<%= albums[7].images[0].url %>" alt="Album Cover"
+                class="draggable w-20 h-20 shadow-xl rounded-lg" data-x="970" data-y="650">
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const canvas = document.getElementById('memeCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = document.querySelector('.canvas-container');
+
+            // Set canvas size to match container
+            function resizeCanvas() {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+                drawBackground();
+            }
+
+            // Draw background image
+            function drawBackground() {
+                const bgImg = new Image();
+                bgImg.src = '/statue-of-god.jpg';
+                bgImg.onload = function () {
+                    // Draw image to fill canvas while maintaining aspect ratio
+                    const hRatio = canvas.width / bgImg.width;
+                    const vRatio = canvas.height / bgImg.height;
+                    const ratio = Math.max(hRatio, vRatio);
+
+                    const centerShiftX = (canvas.width - bgImg.width * ratio) / 2;
+                    const centerShiftY = (canvas.height - bgImg.height * ratio) / 2;
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(
+                        bgImg,
+                        0, 0, bgImg.width, bgImg.height,
+                        centerShiftX, centerShiftY,
+                        bgImg.width * ratio, bgImg.height * ratio
+                    );
+                };
+            }
+
+            // Initialize canvas
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Make album covers draggable
+            const draggables = document.querySelectorAll('.draggable');
+            let activeItem = null;
+            let offsetX, offsetY;
+
+            draggables.forEach(item => {
+                // Set initial position from data attributes
+                const x = parseInt(item.getAttribute('data-x')) || 0;
+                const y = parseInt(item.getAttribute('data-y')) || 0;
+                item.style.left = `${x}px`;
+                item.style.top = `${y}px`;
+
+                // Drag functionality
+                item.addEventListener('mousedown', startDrag);
+                item.addEventListener('touchstart', startDrag);
+            });
+
+            function startDrag(e) {
+                activeItem = this;
+
+                if (e.type === 'mousedown') {
+                    offsetX = e.clientX - activeItem.getBoundingClientRect().left;
+                    offsetY = e.clientY - activeItem.getBoundingClientRect().top;
+                } else if (e.type === 'touchstart') {
+                    offsetX = e.touches[0].clientX - activeItem.getBoundingClientRect().left;
+                    offsetY = e.touches[0].clientY - activeItem.getBoundingClientRect().top;
+                }
+
+                document.addEventListener('mousemove', dragItem);
+                document.addEventListener('touchmove', dragItem);
+                document.addEventListener('mouseup', stopDrag);
+                document.addEventListener('touchend', stopDrag);
+
+                e.preventDefault();
+            }
+
+            function dragItem(e) {
+                if (!activeItem) return;
+
+                let clientX, clientY;
+
+                if (e.type === 'mousemove') {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                } else if (e.type === 'touchmove') {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                }
+
+                const containerRect = container.getBoundingClientRect();
+                const x = clientX - containerRect.left - offsetX;
+                const y = clientY - containerRect.top - offsetY;
+
+                // Boundary checks
+                const maxX = containerRect.width - activeItem.offsetWidth;
+                const maxY = containerRect.height - activeItem.offsetHeight;
+
+                activeItem.style.left = `${Math.max(0, Math.min(x, maxX))}px`;
+                activeItem.style.top = `${Math.max(0, Math.min(y, maxY))}px`;
+
+                // Update data attributes
+                activeItem.setAttribute('data-x', parseInt(activeItem.style.left));
+                activeItem.setAttribute('data-y', parseInt(activeItem.style.top));
+            }
+
+            function stopDrag() {
+                activeItem = null;
+                document.removeEventListener('mousemove', dragItem);
+                document.removeEventListener('touchmove', dragItem);
+                document.removeEventListener('mouseup', stopDrag);
+                document.removeEventListener('touchend', stopDrag);
+            }
+        });
+    </script>
+</body>
+
+</html>
